@@ -1,4 +1,3 @@
-from __future__ import division
 import pygame
 import time
 import random
@@ -12,7 +11,7 @@ FPS = 29
 MIN_BANNER = 0.05
 OFFSET = 0.25
 HOLE_SIZE = 0.9
-FONT = "monospace"
+#FONT = "monospace"
 TXT_SIZE = 0.075
 TXT_COLOR = [240, 240, 240]
 MAXDIM = 150
@@ -38,7 +37,7 @@ def render_loose():
     global falling
     tpos = None
     if type(falling) == type(list()):
-        fallen = int(round((time.clock() - falling[0]) ** 2 * gravity / 2))
+        fallen = int(round((time.time() - falling[0]) ** 2 * gravity / 2))
         if not "popout" in falling:
             tpos = [xsnaps[falling[2]], fallen - r]
             slot = grid[(falling[2], falling[1])]
@@ -54,9 +53,9 @@ def render_loose():
                 tpos[1] = -r
                 falling = False
     elif type(falling) == type(int()):
-        falling = [time.clock(), falling, xslot]
+        falling = [time.time(), falling, xslot]
     elif falling == "popout":
-        falling = [time.clock(), None, xslot, "popout"]
+        falling = [time.time(), None, xslot, "popout"]
         tpos = [xsnaps[xslot], -int(round(tokensize))]
     if not tpos:
         tpos = [xsnaps[xslot], -r]
@@ -112,13 +111,13 @@ def despawn():
     global despawning
     if not despawning:
         full = [pos for pos in grid if grid[pos][1] != None]
-        despawning = [time.clock(), DESPAWN_TIME / len(full)]
+        despawning = [time.time(), DESPAWN_TIME / len(full)]
     else:
-        if time.clock() - despawning[0] >= despawning[1]:
+        if time.time() - despawning[0] >= despawning[1]:
             full = [pos for pos in grid if grid[pos][1] != None]
             if full:
                 grid[random.choice(full)][1] = None
-                despawning[0] = time.clock()
+                despawning[0] = time.time()
             else:
                 despawning = False
 
@@ -127,9 +126,9 @@ def render_text():
     if not label:
         if txt:
             msg = txt.pop(0)
-            label = [font.render(msg[0], False, msg[1]), time.clock()]
+            label = [font.render(msg[0], False, msg[1]), time.time()]
     else:
-        td = time.clock() - label[1]
+        td = time.time() - label[1]
         if td < TXT_TIME:
             d = td - halft
             k = (abs(d) / halft) ** TXT_SPEED
